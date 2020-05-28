@@ -1,7 +1,7 @@
 # votingAPI
 voting API is a secure Rest API that will be used by a web system to register votes from a company employees towards their colleagues in different areas. Authorization & Authentication management was done with JWT methods. 
 
-## Stack
+# Stack
 - Java 11
 - Spring Boot
 - Spring Security
@@ -13,15 +13,15 @@ voting API is a secure Rest API that will be used by a web system to register vo
 - Testing Tool: Junit
 - API Documentation: Swagger
 
-## Architecture
+# Architecture
 This API was built in the context of a Client-Server architecture. On the Server side, the REST services have been splited into 4 packages: model (entity modeling), repository and services (interfaces for and with application logic), and controllers (services exposure). The main used dessign patterns are DTO (Data Transfer Object) for POJO's creation and Facade in order to provide an easy interface for developed services.
 
-## Functionality
+# Functionality
 There are two user roles with different access levels: "ADMIN" can access everything and "EMPLOYEE" only some resources. Referred to voting, employees can vote for other colleagues (not theirself) in different areas once per month.
 
-## Endpoints
+# Endpoints
 
-###ALL USERS
+### ALL USERS
 
 **Login**: The logging endpoint is not protected at all. Required params: username and password. 
 
