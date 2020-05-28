@@ -17,7 +17,7 @@ voting API is a secure Rest API that will be used by a web system to register vo
 This API was built in the context of a Client-Server architecture. On the Server side, the REST services have been splited into 4 packages: model (entity modeling), repository and services (interfaces for and with application logic), and controllers (services exposure). The main used dessign patterns are DTO (Data Transfer Object) for POJO's creation and Facade in order to provide an easy interface for developed services.
 
 # Functionality
-There are two user roles with different access levels: "ADMIN" can access everything and "EMPLOYEE" only some resources. Referred to voting, employees can vote for other colleagues (not theirself) in different areas once per month.
+There are two user roles with different access levels: "ADMIN" can access everything and "EMPLOYEE" only some resources. Referred to voting, employees can vote for other colleagues (not theirself) in different areas once per month. All pre-charged data is in resources/import.sql
 
 # Endpoints
 
