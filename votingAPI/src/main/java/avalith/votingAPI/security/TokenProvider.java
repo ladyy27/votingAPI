@@ -19,6 +19,11 @@ public class TokenProvider {
     private TokenProvider() {
     }
 
+    /***
+     * generateToken returns a token condidering user, roles and expiration date
+     * @param authentication
+     * @return
+     */
     public static String generateToken(Authentication authentication) {
         // Genera el token con roles, issuer, fecha, expiración (8h)
         final String authorities = authentication.getAuthorities().stream()
@@ -34,6 +39,12 @@ public class TokenProvider {
                 .compact();
     }
 
+    /***
+     * getAuthentication() returns a new UsernamePasswordAuthenticationToken object considering the User's credentials & authorities
+     * @param token
+     * @param userDetails
+     * @return
+     */
     public static UsernamePasswordAuthenticationToken getAuthentication(final String token,
                                                                         final UserDetails userDetails) {
 

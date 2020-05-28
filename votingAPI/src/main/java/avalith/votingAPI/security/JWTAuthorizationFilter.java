@@ -1,7 +1,6 @@
 package avalith.votingAPI.security;
 
 import avalith.votingAPI.service.UserService;
-import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +19,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     @Autowired
     private UserService userService;
 
+    /***
+     * doFilterInternal() returns authenticationToken for access to endpoints
+     * @param httpServletRequest
+     * @param httpServletResponse
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {

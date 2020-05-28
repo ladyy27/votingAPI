@@ -1,10 +1,6 @@
 package avalith.votingAPI.controller;
 
-import avalith.votingAPI.model.Area;
-import avalith.votingAPI.model.User;
-import avalith.votingAPI.model.Vote;
-import avalith.votingAPI.model.VoteDTO;
-import avalith.votingAPI.repository.UserRepository;
+import avalith.votingAPI.model.*;
 import avalith.votingAPI.service.AreaService;
 import avalith.votingAPI.service.AuthenticationService;
 import avalith.votingAPI.service.UserService;
@@ -13,17 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.ZoneId;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -35,88 +25,84 @@ public class VoteController {
     private AuthenticationService authenticationFacade;
 
     @Autowired
+    private VoteService voteService;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
     private AreaService areaService;
 
-    @Autowired
-    private VoteService voteService;
-
-    /*public User getCurrentUser(@AuthenticationPrincipal User user) {
-        return user;
-    }*/
-
-    public VoteController(UserRepository userRepository, VoteService voteService) {
+    public VoteController( AuthenticationService authenticationFacade, VoteService voteService, UserService userService, AreaService areaService) {
+        this.authenticationFacade = authenticationFacade;
+        this.voteService = voteService;
+        this.userService = userService;
+        this.areaService = areaService;
     }
 
-    @PreAuthorize("hasRole('ROLE_EMPLOYEE')")
-    @PostMapping
-    @ResponseBody
-    public ResponseEntity<Vote> newVote (@RequestBody VoteDTO voteDTO) {
-
-        long authenticadedUser = currentIdUser();
-        if (voteDTO.getRecipient_id() != authenticadedUser){
-
-            //If there is no comment, comment will be an empty String
-            String comment = voteDTO.getComment();
-            if (comment == null) { comment = ""; }
-
-            //If date is not given from the Client, the Server applies the system date.
-            LocalDate date = voteDTO.getDate();
-            if (date == null) { date = LocalDate.now(ZoneId.systemDefault()); }
-
-
-            User issuerUser = userService.getUser(authenticadedUser);
-            User recipientUser = userService.getUser(voteDTO.getRecipient_id());
-            Area chosenArea = areaService.getArea((voteDTO.getArea_id()));
-            if (issuerUser == null || recipientUser == null || chosenArea == null) { return ResponseEntity.notFound().build(); }
-
-            String currentDate = dateToYearMonth(date);
-            System.out.println(currentDate);
-
-            List<Vote> votesFilter = voteService.getVotesByIssuerAndRecipientAndArea(issuerUser, recipientUser, chosenArea);
-            for (Vote vote : votesFilter) {
-                System.out.println(vote);
-                String dateOfVote = dateToYearMonth(vote.getDate());
-                System.out.println(dateOfVote);
-                if (currentDate.equals(dateOfVote)){
-                    return ResponseEntity.badRequest().build();
-                }
-            }
-            Vote newVote = new Vote();
-            newVote.setIssuer(issuerUser);
-            newVote.setRecipient(recipientUser);
-            newVote.setArea(chosenArea);
-            newVote.setComment(comment);
-            newVote.setDate(date);
-
-            final Vote voteToSave = voteService.save(newVote);
-            return new ResponseEntity<>(voteToSave, HttpStatus.OK);
-        }
-        else{return ResponseEntity.badRequest().build();}
-    }
-
-    //cambiar rol
-    @PreAuthorize("hasRole('ROLE_EMPLOYEE')")
+    @ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public List<Vote> getVotes() {
         final List<Vote> votes = voteService.getVotes();
         return votes;
     }
 
-    public long currentIdUser() {
+    @ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping(value = "/area/{area_id}")
+    public List<Vote> mostVotedByArea(@PathVariable long area_id) {
+        Area area = areaService.getArea(area_id);
+        final List<Vote> votesByArea = voteService.getMostVotedByArea(area);
+        return votesByArea;
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/year/{year}/month/{month}")
+    public List<Vote> mostVotedByMonthAndYear(@PathVariable int year, @PathVariable int month ) {
+        final List<Vote> votesByYearAndMonth = voteService.getMostVotedByYearAndMonth(year, month);
+        return votesByYearAndMonth;
+    }
+
+    @PreAuthorize("hasRole('ROLE_EMPLOYEE')")
+    @PostMapping
+    public ResponseEntity<Vote> newVote (@RequestBody VoteDTO voteDTO) {
+        //Formatting Vote object in order to save
         Authentication authentication = authenticationFacade.getAuthentication();
-        User user = userService.getUserByName(authentication.getName());
-        return user.getId();
+        User currentUser = userService.getUserByName(authentication.getName());
+        User issuerUser = userService.getUser(currentUser.getId());
+        User recipientUser = userService.getUser(voteDTO.getRecipient_id());
+        Area chosenArea = areaService.getArea(voteDTO.getArea_id());
+        String comment = voteDTO.getComment();
+        LocalDate date = voteDTO.getDate();
+
+        //If there is no comment, comment will be an empty String
+        if (comment == null) { comment = ""; }
+
+        //If date is not given from the Client, the Server applies the system date.
+        if (date == null) { date = LocalDate.now(ZoneId.systemDefault()); }
+
+        //If any of those required params is null, the request will not succeed
+        if (issuerUser == null || recipientUser == null || chosenArea == null){
+            return ResponseEntity.badRequest().build(); }
+
+        // The recipient user should not to be the current session user nor a user with rol ADMIN
+        if (recipientUser == issuerUser || userService.isAdmin(recipientUser)) {
+            return ResponseEntity.badRequest().build();}
+
+        // It is allowed only one vote per month
+        if (voteService.checkOneVotePerMonth(date, issuerUser, recipientUser, chosenArea)){
+            return ResponseEntity.badRequest().build(); }
+
+        Vote newVote = new Vote();
+        newVote.setIssuer(issuerUser);
+        newVote.setRecipient(recipientUser);
+        newVote.setArea(chosenArea);
+        newVote.setComment(comment);
+        newVote.setDate(date);
+
+        final Vote voteToSave = voteService.save(newVote);
+        return new ResponseEntity<>(voteToSave, HttpStatus.OK);
     }
-
-    //Input: Local Date , Output: String with month & year in format: aaaa-mm
-    public String dateToYearMonth(LocalDate date){
-        String stringDate = date.toString();
-        String yearAndMonth = stringDate.substring(0,7);
-        return yearAndMonth;
-    }
-
-
 }

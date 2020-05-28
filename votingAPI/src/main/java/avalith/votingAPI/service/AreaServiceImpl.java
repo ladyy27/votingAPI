@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/***
+ * AreaServiceImpl implements all AreaService methods
+ */
 @Service
 public class AreaServiceImpl implements AreaService {
 
@@ -17,12 +20,26 @@ public class AreaServiceImpl implements AreaService {
         this.areaRepository = areaRepository;
     }
 
+    /***
+     * getArea returns an Area object filtered by its id
+     * @param id
+     * @return Area area
+     */
     @Override
     public Area getArea(long id){ return areaRepository.findById(id); }
 
+    /***
+     * getAreas() returns all Area objects
+     * @return List<Area>
+     */
     @Override
     public List<Area> getAreas(){ return areaRepository.findAll(); }
 
+    /***
+     * save() save a new Area object in database
+     * @param area
+     * @return
+     */
     @Override
     public Area save(Area area){ return areaRepository.save(area); }
 }

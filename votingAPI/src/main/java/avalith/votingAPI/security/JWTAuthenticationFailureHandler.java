@@ -22,6 +22,14 @@ public class JWTAuthenticationFailureHandler implements AuthenticationFailureHan
         this.statusErrorResponse = HttpStatus.UNAUTHORIZED;
     }
 
+    /***
+     * onAuthenticationFailure id connection is not succeed, returns a jsonResponse pointing the error
+     * @param request
+     * @param response
+     * @param e
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException e) throws IOException, ServletException {

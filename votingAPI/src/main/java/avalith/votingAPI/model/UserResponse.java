@@ -1,4 +1,4 @@
-package avalith.votingAPI.security;
+package avalith.votingAPI.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
