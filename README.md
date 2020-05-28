@@ -19,22 +19,31 @@ There are two user roles with different access levels: "ADMIN" can access everyt
 
 ## Endpoints
 **ALL USERS**
-**Login**: The logging endpoint is not protected at all. Required params: username and password. 
-POST /login
-	```sh
+**Login**: The logging endpoint is not protected at all. Required params: username and password. POST /login
+
+'''
 	$ curl -i -H "Content-Type: application/json" -X POST -d '{ "username": "user", "password": "password"}' http://localhost:8080/login
-	```
+'''
+	
 **NOTE:** The expected response is a generated TOKEN with 8h expiration time. Replace it in next requests
 
 **EMPLOYEE**
-**New vote**: Required params: recipientId, areaId. Optional params: comment, date
-POST /votes
+**New vote**: Required params: recipientId, areaId. Optional params: comment, date: POST /votes 
+
 	```sh
 	$ curl -i -H 'Content-Type: application/json' -H 'Authorization: Bearer TOKEN' -X POST -d '{ "recipient_id": 1, "area_id": 3, "comment": "vv", "date": "2020-05-25"}' http://localhost:8080/votes/
 	```
+
+
+
+	```sh
+	$ curl -i -H 'Content-Type: application/json' -H 'Authorization: Bearer TOKEN' -X POST -d '{ "recipient_id": 1, "area_id": 3, "comment": "vv", "date": "2020-05-25"}' http://localhost:8080/votes/
+	```
+	
 **ADMIN**
 **Get number of registered employees**: No required params
 GET /users/total
+
 	```sh
 	$ curl -H "Authorization: Bearer TOKEN" http://localhost:8080/users/total
 	```
@@ -56,6 +65,7 @@ In a Terminal:
 
 **How run the Server**
 1. Choose a directory to create the virtual environment **predictorenv** & activate it:
+
 	```sh
 	$ virtualenv predictorenv
 	$ source predictorenv/bin/activate
