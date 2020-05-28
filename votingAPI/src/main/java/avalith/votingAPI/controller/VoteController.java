@@ -65,7 +65,7 @@ public class VoteController {
         return votesByYearAndMonth;
     }
 
-    @PreAuthorize("hasRole('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_EMPLOYEE') OR hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<Vote> newVote (@RequestBody VoteDTO voteDTO) {
         //Formatting Vote object in order to save
@@ -87,8 +87,8 @@ public class VoteController {
         if (issuerUser == null || recipientUser == null || chosenArea == null){
             return ResponseEntity.badRequest().build(); }
 
-        // The recipient user should not to be the current session user nor a user with rol ADMIN
-        if (recipientUser == issuerUser || userService.isAdmin(recipientUser)) {
+        // The recipient user should not to be the current session user
+        if (recipientUser == issuerUser) {
             return ResponseEntity.badRequest().build();}
 
         // It is allowed only one vote per month

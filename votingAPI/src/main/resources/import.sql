@@ -17,6 +17,7 @@ INSERT INTO area (id, name) VALUES (5, 'Motivation');
 INSERT INTO area (id, name) VALUES (6, 'Fun');
 
 INSERT INTO user_roles (user_id, role_id) VALUES (1, 1);
+INSERT INTO user_roles (user_id, role_id) VALUES (1, 2);
 INSERT INTO user_roles (user_id, role_id) VALUES (2, 2);
 INSERT INTO user_roles (user_id, role_id) VALUES (3, 2);
 INSERT INTO user_roles (user_id, role_id) VALUES (4, 2);

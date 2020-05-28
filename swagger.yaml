@@ -1,0 +1,230 @@
+---
+swagger: "2.0"
+info:
+  description: "API for Voting system \n[http://swagger.io](http://swagger.io) or on \n[irc.freenode.net, #swagger](http://swagger.io/irc/).\n"
+  version: 1.0.0
+  title: Voting API
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: ladyy27@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: virtserver.swaggerhub.com
+basePath: /ladyy27/VotingAPI/1.0.0
+schemes:
+- https
+- http
+paths:
+  /votes/area/{area_id}:
+    get:
+      tags:
+      - votes
+      summary: Returns the most voted employees per Area
+      description: Returns a list of Vote objects of the mos voted employees per Area
+      operationId: getmostVotedByArea
+      produces:
+      - application/json
+      parameters:
+      - name: area_id
+        in: path
+        description: ID of an Area
+        required: true
+        type: integer
+        maximum: 7
+        minimum: 1
+        format: int64
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Vote'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Invalid ID supplied
+      security:
+      - ApiKeyAuth: []
+  /votes/year/{year}/month/{month}:
+    get:
+      tags:
+      - votes
+      summary: Returns the most voted employees per month and year
+      description: Returns a list of Vote objects of the mos voted employees per month and year
+      operationId: mostVotedByMonthAndYear
+      produces:
+      - application/json
+      parameters:
+      - name: year
+        in: path
+        description: year
+        required: true
+        type: integer
+        maximum: 2020
+        format: int64
+      - name: month
+        in: path
+        description: month
+        required: true
+        type: integer
+        maximum: 12
+        minimum: 1
+        format: int64
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Vote'
+        "400":
+          description: Invalid month or year supplied
+        "404":
+          description: Invalid month or year supplied
+      security:
+      - ApiKeyAuth: []
+  /votes/:
+    post:
+      tags:
+      - votes
+      summary: Save a new Vote object
+      operationId: newVote
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - in: body
+        name: body
+        description: Vote object that needs to be registered
+        required: true
+        schema:
+          $ref: '#/definitions/Vote'
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Vote'
+        "400":
+          description: Invalid Order
+      security:
+      - ApiKeyAuth: []
+  /login:
+    post:
+      tags:
+      - login
+      summary: Logs user into the system
+      description: Allow users to log in, and to receive a Token
+      operationId: login
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - in: body
+        name: body
+        description: The email/password
+        required: true
+        schema:
+          $ref: '#/definitions/Login'
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Token'
+        "400":
+          description: Not found
+        "404":
+          description: Not found
+  /users/total:
+    get:
+      tags:
+      - user
+      summary: Get total number of registered users
+      operationId: getTotal
+      produces:
+      - application/json
+      - application/xml
+      parameters: []
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: Not found
+        "404":
+          description: Not found
+      security:
+      - ApiKeyAuth: []
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  Area:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+        example: Key Player
+    xml:
+      name: Area
+  Role:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    xml:
+      name: Role
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      password:
+        type: string
+      roles:
+        $ref: '#/definitions/Role'
+    xml:
+      name: User
+  Vote:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      issuer:
+        $ref: '#/definitions/User'
+      recipient:
+        $ref: '#/definitions/User'
+      area:
+        $ref: '#/definitions/Area'
+      comment:
+        type: string
+      date:
+        type: string
+        format: date
+    xml:
+      name: Vote
+  Login:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+  Token:
+    type: object
+    properties:
+      token:
+        type: string
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
