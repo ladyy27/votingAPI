@@ -18,8 +18,12 @@ This API was built in the context of a Client-Server architecture. On the Server
 There are two user roles with different access levels: "ADMIN" can access everything and "EMPLOYEE" only some resources. Referred to voting, employees can vote for other colleagues (not theirself) in different areas once per month.
 
 ## Endpoints
+
 **ALL USERS**
-**Login**: The logging endpoint is not protected at all. Required params: username and password. POST /login
+
+**Login**: The logging endpoint is not protected at all. Required params: username and password. 
+
+**POST /login**
 
 	```
 	$ curl -i -H "Content-Type: application/json" -X POST -d '{ "username": "user", "password": "password"}' http://localhost:8080/login
@@ -28,15 +32,20 @@ There are two user roles with different access levels: "ADMIN" can access everyt
 **NOTE:** The expected response is a generated TOKEN with 8h expiration time. Replace it in next requests
 
 **EMPLOYEE**
-**New vote**: Required params: recipientId, areaId. Optional params: comment, date: POST /votes
 
-	```sh
+**New vote**: Required params: recipientId, areaId. Optional params: comment, date: 
+
+**POST /votes**
+
+	```
 	$ curl -i -H 'Content-Type: application/json' -H 'Authorization: Bearer TOKEN' -X POST -d '{ "recipient_id": 1, "area_id": 3, "comment": "vv", "date": "2020-05-25"}' http://localhost:8080/votes/
 	```
 	
 **ADMIN**
+
 **Get number of registered employees**: No required params
-GET /users/total
+
+**GET /users/total**
 
 
 	```sh
@@ -45,14 +54,16 @@ GET /users/total
 	
 
 **Get the most voted employees by year and month**: Required params: year, month
-GET /votes/year/{year}/month/{month}
+
+**GET /votes/year/{year}/month/{month}**
 
 	```sh
 	$ curl -H "Authorization: Bearer TOKEN" http://localhost:8080/votes/year/2020/month/05
 	```
 
 **Get the most voted employees by area**: Required params: areaId
-GET /votes/area/{areaId}
+
+**GET /votes/area/{areaId}**
 
 	```sh
 	$ curl -H "Authorization: Bearer TOKEN" http://localhost:8080/votes/area/2
