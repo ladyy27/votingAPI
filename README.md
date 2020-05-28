@@ -2,11 +2,13 @@
 voting API is a secure Rest API that will be used by a web system to register votes from a company employees towards their colleagues in different areas. Authorization & Authentication management was done with JWT methods. 
 
 ## Stack
+- Java 11
 - Spring Boot
 - Spring Security
 - Spring Data JPA
+- IDE: InteliJ IDEA 
 - Dependency Manager: Maven
-- Code Generator & Builder: Lombok
+- Code Generator & Builder: Lombok ([Needs to enable 'Annotation Proccesing'](https://immutables.github.io/apt.html))
 - Database: H2
 - Testing Tool: Junit
 - API Documentation: Swagger
@@ -19,17 +21,14 @@ There are two user roles with different access levels: "ADMIN" can access everyt
 
 ## Endpoints
 
-**ALL USERS**
+###ALL USERS
 
 **Login**: The logging endpoint is not protected at all. Required params: username and password. 
 
 **POST /login**
 
 	```
-	$ curl -i -H "Content-Type: application/json" -X POST -d 
-	'{ "username": "user", 
-	"password": "password"}' 
-	http://localhost:8080/login
+	$ curl -i -H "Content-Type: application/json" -X POST -d '{ "username": "user", "password": "password"}' http://localhost:8080/login
 	```
 	
 **NOTE:** The expected response is a generated TOKEN with 8h expiration time. Replace it in next requests
@@ -41,11 +40,7 @@ There are two user roles with different access levels: "ADMIN" can access everyt
 **POST /votes**
 
 	```
-	$ curl -i -H 'Content-Type: application/json' -H 'Authorization: Bearer TOKEN' -X POST -d 
-	'{ "recipient_id": 1, 
-	"area_id": 3, 
-	"comment": "vv", 
-	"date": "2020-05-25"}' http://localhost:8080/votes/
+	$ curl -i -H 'Content-Type: application/json' -H 'Authorization: Bearer TOKEN' -X POST -d '{ "recipient_id": 1, "area_id": 3, "comment": "vv", "date": "2020-05-25"}' http://localhost:8080/votes/
 	```
 	
 **ADMIN**
@@ -72,6 +67,6 @@ There are two user roles with different access levels: "ADMIN" can access everyt
 
 **GET /votes/area/{areaId}**
 
-	```sh
+	```
 	$ curl -H "Authorization: Bearer TOKEN" http://localhost:8080/votes/area/2
 	```
