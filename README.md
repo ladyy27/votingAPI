@@ -1,25 +1,55 @@
 # votingAPI
-Secure API with permissions &amp; roles management via JWT
+voting API is a secure Rest API that will be used by a web system to register votes from a company employees towards their colleagues in different areas. Authorization & Authentication management was done with JWT methods. 
 
-# pico-placa-predictor
-A predictor app to determine if a car can be on road according its license plate, a date and a time (Based in the Pico&amp;Placa past rules) [Check it here](https://ecuador.seguros123.com/todo-lo-que-debes-saber-del-famoso-pico-y-placa/).
+## Stack
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- Dependency Manager: Maven
+- Code Generator & Builder: Lombok
+- Database: H2
+- Testing Tool: Junit
+- API Documentation: Swagger
 
-**NOTE:** These steps were written for Mac OS, Other OS are supported from the virtual environment creation.
+## Architecture
+This API was built in the context of a Client-Server architecture. On the Server side, the REST services have been splited into 4 packages: model (entity modeling), repository and services (interfaces for and with application logic), and controllers (services exposure). The main used dessign patterns are DTO (Data Transfer Object) for POJO's creation and Facade in order to provide an easy interface for developed services.
 
-## Requirements
-**Server** 
-- Python 3.7
-- Django 3.0.3
-- Django REST 3.11.0
-- Pip3 (python3 get-pip.py)
-- Virtualenv (pip install virtualenv)
+## Functionality
+There are two user roles with different access levels: "ADMIN" can access everything and "EMPLOYEE" only some resources. Referred to voting, employees can vote for other colleagues (not theirself) in different areas once per month.
 
-**Client** 
-- Node.js 10.14.2
-- Angular 8:0.803.24
+## Endpoints
+**ALL USERS**
+**Login**: The logging endpoint is not protected at all. Required params: username and password. 
+POST /login
+	```sh
+	$ curl -i -H "Content-Type: application/json" -X POST -d '{ "username": "user", "password": "password"}' http://localhost:8080/login
+	```
+**NOTE:** The expected response is a generated TOKEN with 8h expiration time. Replace it in next requests
 
-**TDD Tool:** [unittest](https://docs.python.org/3/library/unittest.html#module-unittest)
+**EMPLOYEE**
+**New vote**: Required params: recipientId, areaId. Optional params: comment, date
+POST /votes
+	```sh
+	$ curl -i -H 'Content-Type: application/json' -H 'Authorization: Bearer TOKEN' -X POST -d '{ "recipient_id": 1, "area_id": 3, "comment": "vv", "date": "2020-05-25"}' http://localhost:8080/votes/
+	```
+**ADMIN**
+**Get number of registered employees**: No required params
+GET /users/total
+	```sh
+	$ curl -H "Authorization: Bearer TOKEN" http://localhost:8080/users/total
+	```
 
+**Get the most voted employees by year and month**: Required params: year, month
+GET /votes/year/{year}/month/{month}
+	```sh
+	$ curl -H "Authorization: Bearer TOKEN" http://localhost:8080/votes/year/2020/month/05
+	```
+
+**Get the most voted employees by area**: Required params: areaId
+GET /votes/area/{areaId}
+	```sh
+	$ curl -H "Authorization: Bearer TOKEN" http://localhost:8080/votes/area/2
+	```
 ## How to run the project
 
 In a Terminal:
@@ -71,3 +101,5 @@ It will show you if a car with that license plate can or not can be on the road 
 	```sh
 	$ deactivate
 	```
+	
+	**NOTE:** These steps were written for Mac OS, Other OS are supported from the virtual environment creation.
