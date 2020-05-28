@@ -21,9 +21,10 @@ There are two user roles with different access levels: "ADMIN" can access everyt
 
 # Endpoints
 
-### ALL USERS
+## ALL USERS
 
 **Login**: The logging endpoint is not protected at all. Required params: username and password. 
+
 
 **POST /login**
 
@@ -33,9 +34,11 @@ There are two user roles with different access levels: "ADMIN" can access everyt
 	
 **NOTE:** The expected response is a generated TOKEN with 8h expiration time. Replace it in next requests
 
-**EMPLOYEE**
+## EMPLOYEE
+
 
 **New vote**: Required params: recipientId, areaId. Optional params: comment, date: 
+
 
 **POST /votes**
 
@@ -43,9 +46,11 @@ There are two user roles with different access levels: "ADMIN" can access everyt
 	$ curl -i -H 'Content-Type: application/json' -H 'Authorization: Bearer TOKEN' -X POST -d '{ "recipient_id": 1, "area_id": 3, "comment": "vv", "date": "2020-05-25"}' http://localhost:8080/votes/
 	```
 	
-**ADMIN**
+## ADMIN
+
 
 **Get number of registered employees**: No required params
+
 
 **GET /users/total**
 
@@ -57,13 +62,16 @@ There are two user roles with different access levels: "ADMIN" can access everyt
 
 **Get the most voted employees by year and month**: Required params: year, month
 
+
 **GET /votes/year/{year}/month/{month}**
 
 	```
 	$ curl -H "Authorization: Bearer TOKEN" http://localhost:8080/votes/year/2020/month/05
 	```
 
+
 **Get the most voted employees by area**: Required params: areaId
+
 
 **GET /votes/area/{areaId}**
 
